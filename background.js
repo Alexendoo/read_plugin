@@ -12,6 +12,16 @@ function onContextCLick(info, tab) {
         });
     });
 }
+function onReadSelectionShortcut() {
+    browser.tabs.query({
+        "active": true,
+        "currentWindow": true
+    }, function (tabs) {
+        browser.tabs.sendMessage(tabs[0].id, {
+            "functiontoInvoke": "readSelectedText"
+        });
+    });
+}
 
 function onIconClick(info, tab) {
     browser.tabs.query({
@@ -38,3 +48,6 @@ for (var i = 0; i < contexts.length; i++) {
 
 // Handle clicking on the browser icon
 browser.browserAction.onClicked.addListener(function(tab) { onIconClick(); });
+browser.commands.onCommand.addListener(function(command) {
+    if(command === 'read_selection') { onReadSelectionShortcut(); }
+});

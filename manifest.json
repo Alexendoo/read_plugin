@@ -37,6 +37,18 @@
     },
     "manifest_version": 2,
     "name": "Readerly",
+    "commands": {
+        "read_selection": {
+            "suggested_key": { "default": "Ctrl+Shift+X" },
+            "description": "Read Selection"
+        },
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Z",
+                "mac": "MacCtrl+Shift+Z"
+            }
+        }
+    },
     "offline_enabled": true,
     "permissions": [
         "contextMenus",

@@ -16,6 +16,7 @@
 * 
 * 
 * WARNING:
+* WARNING:
 * Storage is all user settings. Too cumbersome otherwise for now.
 */
 
@@ -51,7 +52,7 @@
 		var setts 	= new Settings( storage, oldSettings );
 		delayer 	= new Delayer( setts._settings );
 		timer 		= new Timer( delayer );
-		coreDisplay = new Display( timer );
+		coreDisplay = new Display( timer, undefined, setts );
 
 		textElem 	= coreDisplay.nodes.textElements;
 		fragmentor 	= new WordSplitter( textElem, setts );
@@ -125,12 +126,21 @@
 	};
 
 
+	var createReadableContainer = function(selection) {
+        var $readable = $('<div></div>');
+        $readable.append(selection);
+        return $readable;
+    };
+    var getTextSelection = function() {
+		return document.getSelection().getRangeAt(0).cloneContents();
+    };
+    var isEmptyContainer = function(container) {
+		return !container[0].innerHTML;
+    };
 	var readSelectedText = function () {
-		openReaderly();
-		var contents = document.getSelection().getRangeAt(0).cloneContents();
-		var $container = $('<div></div>');
-		$container.append(contents);
-		read( $container[0] );
+		var $container = createReadableContainer(getTextSelection());
+        openReaderly();
+        return isEmptyContainer($container) ? false : read($container);
 	};
 
 
