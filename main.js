@@ -1,20 +1,20 @@
 /* main.js
-* 
+*
 * TODO:
 * - Cache whole page text when possible/read
 * - Cache reading progress?
 * - Remove html parsing from sbd node module
 * - Break this up into more descrete modules
 * - Combine Words.js and WordNav.js
-* 
+*
 * DONE:
 * - Cache options and prevent them from being reset on
 * 	close of extension
 * - Trigger pause on clicking of central element, not
 * 	just text
 * - Add function "cleanNode" to get rid of unwanted elements
-* 
-* 
+*
+*
 * WARNING:
 * WARNING:
 * Storage is all user settings. Too cumbersome otherwise for now.
@@ -113,7 +113,7 @@
         if (parser.debug) {  // Help non-coder devs identify some bugs
     	    console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Readerly, it\'s with one of the other libraries. That problem will have to be fixed later.');
         }
-		
+
 		wordNav.process( sentenceWords, fragmentor );
 		timer.start( wordNav );
 		return true;
@@ -126,21 +126,10 @@
 	};
 
 
-	var createReadableContainer = function(selection) {
-        var $readable = $('<div></div>');
-        $readable.append(selection);
-        return $readable;
-    };
-    var getTextSelection = function() {
-		return document.getSelection().getRangeAt(0).cloneContents();
-    };
-    var isEmptyContainer = function(container) {
-		return !container[0].innerHTML;
-    };
 	var readSelectedText = function () {
-		var $container = createReadableContainer(getTextSelection());
+		var selection = window.getSelection().toString();
         openReaderly();
-        return isEmptyContainer($container) ? false : read($container);
+        return selection ? read(selection) : false;
 	};
 
 
