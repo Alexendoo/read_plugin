@@ -46,6 +46,10 @@
             "suggested_key": { "default": "Ctrl+Shift+S" },
             "description": "Graphical Selection"
         },
+        "halve_speed": {
+            "suggested_key": { "default": "Ctrl+Shift+H" },
+            "description": "Halve reader speed"
+        },
         "_execute_browser_action": {
             "suggested_key": {
                 "default": "Ctrl+Shift+Z",

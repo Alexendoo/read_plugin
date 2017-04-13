@@ -191,16 +191,32 @@
 		document.addEventListener('click', selectionClicked);
 	}
 
+	var halveSpeed = function () {
+		var checkbox = coreDisplay.nodes.doc.getElementById('__rdly_halvespeed_input')
+		checkbox.checked = !checkbox.checked
+		checkbox.dispatchEvent(new Event('change'))
+	}
+
 	// ==============================
 	// EXTENSION EVENT LISTENER
 	// ==============================
 	var browser = chrome || browser;
 
 	browser.extension.onMessage.addListener(function (request, sender, sendResponse) {
-		var func = request.functiontoInvoke;
-		if ( func === "readSelectedText" ) { readSelectedText(); }
-		else if ( func === "readFullPage" ) { readArticle(); }
-		else if ( func === "getSelection" ) { getSelection(); }
+		switch (request.functiontoInvoke) {
+			case "readSelectedText":
+				readSelectedText();
+				break;
+			case "readFullPage":
+				readArticle();
+				break;
+			case "getSelection":
+				getSelection();
+				break;
+			case "halveSpeed":
+				halveSpeed();
+				break;
+		}
 
 	});  // End event listener
 

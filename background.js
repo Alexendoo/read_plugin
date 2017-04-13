@@ -46,6 +46,17 @@ function onIconClick(info, tab) {
     });
 }
 
+function onHalveSpeed(info, tab) {
+    browser.tabs.query({
+        "active": true,
+        "currentWindow": true
+    }, function (tabs) {
+        browser.tabs.sendMessage(tabs[0].id, {
+            "functiontoInvoke": "halveSpeed"
+        });
+    });
+}
+
 // Write this in an expandable way in case we want to move beyond selection
 var contexts = ["selection"];
 for (var i = 0; i < contexts.length; i++) {
@@ -73,6 +84,10 @@ browser.commands.onCommand.addListener(function(command) {
 
         case 'graphical_selection':
             onGetSelection();
+            break;
+
+        case 'halve_speed':
+            onHalveSpeed();
             break;
     }
 });
