@@ -174,7 +174,8 @@
 		if (event.keyCode === 27 /* ESC */) {
 			event.preventDefault();
 			event.stopPropagation();
-			cleanupSelection()
+			cleanupSelection();
+			return false;
 		}
 	}
 
@@ -187,7 +188,8 @@
 			stripNodes(clone);
 			read(clone.textContent);
 		}
-		cleanupSelection()
+		cleanupSelection();
+		return false;
 	}
 
 	var getSelection = function () {
