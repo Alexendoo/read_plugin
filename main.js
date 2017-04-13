@@ -193,6 +193,9 @@
 	}
 
 	var getSelection = function () {
+		// reset keyboard focus
+		document.activeElement.blur();
+
 		document.addEventListener('mousemove', selectionMoved);
 		document.addEventListener('click', selectionClicked);
 		document.addEventListener('keyup', cancelSelection);
