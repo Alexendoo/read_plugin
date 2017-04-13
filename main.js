@@ -170,31 +170,49 @@
 		selected.classList.add('__rdly-selected');
 	}
 
+	var cancelSelection = function (event) {
+		if (event.keyCode === 27 /* ESC */) {
+			event.preventDefault();
+			event.stopPropagation();
+			cleanupSelection()
+		}
+	}
+
 	var selectionClicked = function (event) {
 		event.preventDefault();
 		event.stopPropagation();
-		document.removeEventListener('mousemove', selectionMoved);
-		document.removeEventListener('click', selectionClicked);
 		if (lastSelected) {
-			lastSelected.classList.remove('__rdly-selected');
 			openReaderly();
 			var clone = lastSelected.cloneNode(true);
 			stripNodes(clone);
 			read(clone.textContent);
 		}
-		lastTarget = undefined;
-		lastSelected = undefined;
+		cleanupSelection()
 	}
 
 	var getSelection = function () {
 		document.addEventListener('mousemove', selectionMoved);
 		document.addEventListener('click', selectionClicked);
+		document.addEventListener('keyup', cancelSelection);
 	}
 
 	var halveSpeed = function () {
 		var checkbox = coreDisplay.nodes.doc.getElementById('__rdly_halvespeed_input')
 		checkbox.checked = !checkbox.checked
 		checkbox.dispatchEvent(new Event('change'))
+	}
+
+	function cleanupSelection() {
+		document.removeEventListener('mousemove', selectionMoved);
+		document.removeEventListener('click', selectionClicked);
+		document.removeEventListener('keyup', cancelSelection);
+
+		if (lastSelected) {
+			lastSelected.classList.remove('__rdly-selected');
+		}
+
+		lastSelected = undefined;
+		lastTarget = undefined;
 	}
 
 	// ==============================
