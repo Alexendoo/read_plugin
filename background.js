@@ -66,5 +66,13 @@ browser.contextMenus.create({
 // Handle clicking on the browser icon
 browser.browserAction.onClicked.addListener(function(tab) { onIconClick(); });
 browser.commands.onCommand.addListener(function(command) {
-    if(command === 'read_selection') { onReadSelectionShortcut(); }
+    switch (command) {
+        case 'read_selection':
+            onReadSelectionShortcut();
+            break;
+
+        case 'graphical_selection':
+            onGetSelection();
+            break;
+    }
 });

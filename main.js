@@ -110,9 +110,9 @@
 
 		var sentenceWords = parser.parse( node );  // returns [[Str]]
 
-        if (parser.debug) {  // Help non-coder devs identify some bugs
-    	    console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Readerly, it\'s with one of the other libraries. That problem will have to be fixed later.');
-        }
+		if (parser.debug) {  // Help non-coder devs identify some bugs
+			console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Readerly, it\'s with one of the other libraries. That problem will have to be fixed later.');
+		}
 
 		wordNav.process( sentenceWords, fragmentor );
 		timer.start( wordNav );
@@ -126,10 +126,24 @@
 	};
 
 
-	var readSelectedText = function () {
-		var selection = window.getSelection().toString();
-        openReaderly();
-        return selection ? read(selection) : false;
+	var stripNodes = function (node) {
+		var elements = node.querySelectorAll('sup, script, style, head, .off-screen');
+		for (var i = 0; i < elements.length; i++) {
+			elements[i].parentElement.removeChild(elements[i]);
+		}
+	}
+
+
+	var readSelectedText = function(){
+		var selection   = document.getSelection();
+		var docFragment = selection.getRangeAt(0).cloneContents();
+
+		stripNodes(docFragment);
+
+		var cleaned = String(docFragment.textContent);
+
+		openReaderly();
+		return cleaned ? read(cleaned) : false;
 	};
 
 
@@ -164,7 +178,9 @@
 		if (lastSelected) {
 			lastSelected.classList.remove('__rdly-selected');
 			openReaderly();
-			read(lastSelected.textContent);
+			var clone = lastSelected.cloneNode(true);
+			stripNodes(clone);
+			read(clone.textContent);
 		}
 		lastTarget = undefined;
 		lastSelected = undefined;
