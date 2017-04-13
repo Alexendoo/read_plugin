@@ -160,3 +160,7 @@
 #__rdly_restart {
 	/*background-image: url('');*/
 }
+
+.__rdly-selected {
+	background-color: salmon !important;
+}

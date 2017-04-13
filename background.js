@@ -12,6 +12,7 @@ function onContextCLick(info, tab) {
         });
     });
 }
+
 function onReadSelectionShortcut() {
     browser.tabs.query({
         "active": true,
@@ -19,6 +20,17 @@ function onReadSelectionShortcut() {
     }, function (tabs) {
         browser.tabs.sendMessage(tabs[0].id, {
             "functiontoInvoke": "readSelectedText"
+        });
+    });
+}
+
+function onGetSelection(info, tab) {
+    browser.tabs.query({
+        "active": true,
+        "currentWindow": true
+    }, function (tabs) {
+        browser.tabs.sendMessage(tabs[0].id, {
+            "functiontoInvoke": "getSelection"
         });
     });
 }
@@ -45,6 +57,11 @@ for (var i = 0; i < contexts.length; i++) {
         "onclick": onContextCLick
     });
 }
+
+browser.contextMenus.create({
+    title: "Select text to read",
+    onclick: onGetSelection
+})
 
 // Handle clicking on the browser icon
 browser.browserAction.onClicked.addListener(function(tab) { onIconClick(); });

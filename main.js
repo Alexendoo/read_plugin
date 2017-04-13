@@ -139,7 +139,41 @@
 		read( $clone[0] );
 	};
 
+	var lastTarget;
+	var lastSelected;
+	var selectionMoved = function (event) {
+		if (lastTarget === event.target) return;
+		lastSelected && lastSelected.classList.remove('__rdly-selected');
+		lastTarget = event.target;
 
+		var selected = event.target;
+		// walk up the DOM until we have a node containing some text
+		while (selected.textContent === '' && selected.parentElement !== null) {
+			selected = selected.parentElement;
+		}
+		lastSelected = selected
+
+		selected.classList.add('__rdly-selected');
+	}
+
+	var selectionClicked = function (event) {
+		event.preventDefault();
+		event.stopPropagation();
+		document.removeEventListener('mousemove', selectionMoved);
+		document.removeEventListener('click', selectionClicked);
+		if (lastSelected) {
+			lastSelected.classList.remove('__rdly-selected');
+			openReaderly();
+			read(lastSelected.textContent);
+		}
+		lastTarget = undefined;
+		lastSelected = undefined;
+	}
+
+	var getSelection = function () {
+		document.addEventListener('mousemove', selectionMoved);
+		document.addEventListener('click', selectionClicked);
+	}
 
 	// ==============================
 	// EXTENSION EVENT LISTENER
@@ -147,10 +181,10 @@
 	var browser = chrome || browser;
 
 	browser.extension.onMessage.addListener(function (request, sender, sendResponse) {
-
 		var func = request.functiontoInvoke;
 		if ( func === "readSelectedText" ) { readSelectedText(); }
 		else if ( func === "readFullPage" ) { readArticle(); }
+		else if ( func === "getSelection" ) { getSelection(); }
 
 	});  // End event listener
 
