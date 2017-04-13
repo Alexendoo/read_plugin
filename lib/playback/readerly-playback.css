@@ -161,6 +161,6 @@
 	/*background-image: url('');*/
 }
 
-.__rdly-selected, .__rdly-selected * {
+.__rdly-selected {
 	background-color: salmon !important;
 }
