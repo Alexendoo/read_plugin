@@ -42,6 +42,10 @@
             "suggested_key": { "default": "Ctrl+Shift+X" },
             "description": "Read Selection"
         },
+        "graphical_selection": {
+            "suggested_key": { "default": "Ctrl+Shift+S" },
+            "description": "Graphical Selection"
+        },
         "_execute_browser_action": {
             "suggested_key": {
                 "default": "Ctrl+Shift+Z",
