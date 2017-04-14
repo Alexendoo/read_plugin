@@ -169,11 +169,23 @@
 	var multiSelect = function (event) {
 		lastSelected = undefined;
 		var target = findTextNode(event.target);
+
+		// if already selected, deselect
+		var index = selected.indexOf(target);
+		if (index !== -1) {
+			target.classList.remove('__rdly-selected');
+			selected.splice(index, 1);
+			return;
+		}
+
+		// don't do anything if the target is a sibling of an already selected node
 		var contained = selected.some(function(node) {
 			return node.contains(target);
 		});
 		if (contained) return;
 
+
+		// if the target is a parent of any already selected nodes, remove them
 		selected = selected.filter(function(node) {
 			var sibling = target.contains(node);
 			if (sibling) node.classList.remove('__rdly-selected');
