@@ -186,10 +186,17 @@
 	}
 
 	var finishMultiSelect = function () {
-		for (var i = 0; i < selected.length; i++) {
-			var node = selected[i];
-			console.log(node);
-		}
+		var text = Array.from(document.getElementsByTagName("*"))
+			.filter(function(node) {
+				return selected.indexOf(node) !== -1;
+			})
+			.map(function(node) {
+				return node.textContent;
+			})
+			.join(". ");
+
+		openReaderly();
+		read(text);
 	}
 
 	var selectionMoved = function (event) {
@@ -210,6 +217,7 @@
 		switch (event.keyCode) {
 			case 17: // Ctrl
 				if (selected.length > 0) {
+					finishMultiSelect();
 					cleanupSelection();
 				}
 				break;
