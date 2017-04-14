@@ -153,79 +153,110 @@
 		read( $clone[0] );
 	};
 
+	// walk up the DOM until we have a node containing some text
+	var findTextNode = function (node) {
+		while (node.textContent === '' && node.parentElement !== null) {
+			node = node.parentElement;
+		}
+
+		return node;
+	}
+
 	var lastTarget;
 	var lastSelected;
 	var selected = [];
 
 	var multiSelect = function (event) {
 		lastSelected = undefined;
+		var target = findTextNode(event.target);
 		var contained = selected.some(function(node) {
-			return node.contains(event.target);
+			return node.contains(target);
 		});
 		if (contained) return;
-		console.log(event);
 
 		selected = selected.filter(function(node) {
-			var sibling = !event.target.contains(node);
+			var sibling = target.contains(node);
 			if (sibling) node.classList.remove('__rdly-selected');
 
-			return sibling;
+			return !sibling;
 		});
 
-		event.target.classList.add('__rdly-selected');
-		selected.push(event.target);
+		target.classList.add('__rdly-selected');
+		selected.push(target);
 	}
 
-	var clearMultiSelect = function (event) {
+	var finishMultiSelect = function () {
 		for (var i = 0; i < selected.length; i++) {
-			var element = selected[i];
-			element.classList.remove('__rdly-selected');
+			var node = selected[i];
+			console.log(node);
 		}
-		selected = [];
 	}
 
 	var selectionMoved = function (event) {
-		if (event.ctrlKey) {
-			return multiSelect(event);
-		} else if (multiSelect.size > 0) {
-			clearMultiSelect(event);
-		}
-		if (lastTarget === event.target) return;
-		lastSelected && lastSelected.classList.remove('__rdly-selected');
+		if (event.ctrlKey || lastTarget === event.target) return;
+
+		lastSelected !== undefined
+			&& lastSelected.classList !== undefined
+			&& lastSelected.classList.remove('__rdly-selected');
 		lastTarget = event.target;
 
-		var selected = event.target;
-		// walk up the DOM until we have a node containing some text
-		while (selected.textContent === '' && selected.parentElement !== null) {
-			selected = selected.parentElement;
-		}
-		lastSelected = selected
+		var selected = findTextNode(event.target);
+		lastSelected = selected;
 
 		selected.classList.add('__rdly-selected');
 	}
 
-	var cancelSelection = function (event) {
-		if (event.keyCode === 27 /* ESC */) {
-			event.preventDefault();
-			event.stopPropagation();
-			cleanupSelection();
-			return false;
+	var selectionKeyUp = function (event) {
+		switch (event.keyCode) {
+			case 17: // Ctrl
+				if (selected.length > 0) {
+					cleanupSelection();
+				}
+				break;
+
+			case 27: // Esc
+				cleanupSelection();
+				break;
+
+			default:
+				return;
 		}
+
+		return false;
+	}
+
+	var selectionKeyDown = function (event) {
+		switch (event.keyCode) {
+			case 17: // Ctrl
+				if (lastTarget !== undefined) {
+					lastTarget.classList.remove('__rdly-selected');
+					lastTarget = undefined;
+				}
+				break;
+
+			default:
+				return;
+		}
+
+		return false;
 	}
 
 	var selectionClicked = function (event) {
 		event.preventDefault();
 		event.stopPropagation();
-		if (selected.length > 0) {
-			console.log(selected);
+
+		if (event.ctrlKey) {
+			multiSelect(event);
 		} else if (lastSelected) {
 			openReaderly();
 			var clone = lastSelected.cloneNode(true);
 			stripNodes(clone);
 			read(clone.textContent);
+
+			cleanupSelection();
 		}
-		clearMultiSelect();
-		cleanupSelection();
+
+
 		return false;
 	}
 
@@ -235,7 +266,8 @@
 
 		document.addEventListener('mousemove', selectionMoved);
 		document.addEventListener('click', selectionClicked);
-		document.addEventListener('keyup', cancelSelection);
+		document.addEventListener('keyup', selectionKeyUp);
+		document.addEventListener('keydown', selectionKeyDown);
 	}
 
 	var halveSpeed = function () {
@@ -247,12 +279,19 @@
 	function cleanupSelection() {
 		document.removeEventListener('mousemove', selectionMoved);
 		document.removeEventListener('click', selectionClicked);
-		document.removeEventListener('keyup', cancelSelection);
+		document.removeEventListener('keyup', selectionKeyUp);
+		document.removeEventListener('keydown', selectionKeyDown);
 
 		if (lastSelected) {
 			lastSelected.classList.remove('__rdly-selected');
 		}
 
+		for (var i = 0; i < selected.length; i++) {
+			var element = selected[i];
+			element.classList.remove('__rdly-selected');
+		}
+
+		selected = [];
 		lastSelected = undefined;
 		lastTarget = undefined;
 	}
