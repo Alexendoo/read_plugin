@@ -155,7 +155,41 @@
 
 	var lastTarget;
 	var lastSelected;
+	var selected = [];
+
+	var multiSelect = function (event) {
+		lastSelected = undefined;
+		var contained = selected.some(function(node) {
+			return node.contains(event.target);
+		});
+		if (contained) return;
+		console.log(event);
+
+		selected = selected.filter(function(node) {
+			var sibling = !event.target.contains(node);
+			if (sibling) node.classList.remove('__rdly-selected');
+
+			return sibling;
+		});
+
+		event.target.classList.add('__rdly-selected');
+		selected.push(event.target);
+	}
+
+	var clearMultiSelect = function (event) {
+		for (var i = 0; i < selected.length; i++) {
+			var element = selected[i];
+			element.classList.remove('__rdly-selected');
+		}
+		selected = [];
+	}
+
 	var selectionMoved = function (event) {
+		if (event.ctrlKey) {
+			return multiSelect(event);
+		} else if (multiSelect.size > 0) {
+			clearMultiSelect(event);
+		}
 		if (lastTarget === event.target) return;
 		lastSelected && lastSelected.classList.remove('__rdly-selected');
 		lastTarget = event.target;
@@ -182,12 +216,15 @@
 	var selectionClicked = function (event) {
 		event.preventDefault();
 		event.stopPropagation();
-		if (lastSelected) {
+		if (selected.length > 0) {
+			console.log(selected);
+		} else if (lastSelected) {
 			openReaderly();
 			var clone = lastSelected.cloneNode(true);
 			stripNodes(clone);
 			read(clone.textContent);
 		}
+		clearMultiSelect();
 		cleanupSelection();
 		return false;
 	}
