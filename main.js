@@ -206,10 +206,9 @@
 				var clone = node.cloneNode(true);
 				stripNodes(clone);
 
-				// normalise sentence endings
-				return clone.textContent.replace(/\.?\s*$/, '');
+				return clone.textContent;
 			})
-			.join('. ');
+			.join(' ');
 
 		openReaderly();
 		read(text);
