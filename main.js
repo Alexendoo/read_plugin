@@ -203,9 +203,13 @@
 				return selected.indexOf(node) !== -1;
 			})
 			.map(function(node) {
-				return node.textContent;
+				var clone = node.cloneNode(true);
+				stripNodes(clone);
+
+				// normalise sentence endings
+				return clone.textContent.replace(/\.?\s*$/, '');
 			})
-			.join(". ");
+			.join('. ');
 
 		openReaderly();
 		read(text);
