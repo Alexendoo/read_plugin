@@ -20,6 +20,8 @@
 * Storage is all user settings. Too cumbersome otherwise for now.
 */
 
+_t = window.setTimeout; window.setTimeout = function(...args) { console.log(...args); return _t(...args) };
+
 (function(){
 
 	// ============== SETUP ============== \\
@@ -32,7 +34,7 @@
 		Storage 	= require('./lib/ReaderlyStorage.js'),
 		WordNav 	= require('./lib/parse/WordNav.js'),
 		WordSplitter= require('./lib/parse/WordSplitter.js'),
-		Delayer 	= require('@knod/string-time'),
+		Delayer 	= require('./lib/playback/StringTime.js'),
 		Timer 		= require('./lib/playback/ReaderlyTimer.js'),
 		Display 	= require('./lib/ReaderlyDisplay.js'),
 		PlaybackUI 	= require('./lib/playback/PlaybackUI.js'),
