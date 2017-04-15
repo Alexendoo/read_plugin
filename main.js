@@ -20,8 +20,6 @@
 * Storage is all user settings. Too cumbersome otherwise for now.
 */
 
-_t = window.setTimeout; window.setTimeout = function(...args) { console.log(...args); return _t(...args) };
-
 (function(){
 
 	// ============== SETUP ============== \\
